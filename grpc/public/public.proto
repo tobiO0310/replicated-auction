@@ -1,0 +1,29 @@
+syntax = "proto3";
+package grpc;
+option go_package = "replicated_auction/grpc/public";
+
+message MakeBidRequest {
+    uint32 bid = 1;
+    optional uint32 my_id = 2;
+}
+message MakeBidResponse {
+    bool success = 1;
+    uint32 your_id = 2;
+}
+
+message GetResultRequest {}
+message GetResultResponse {
+    message Winner {
+        uint32 bidder_id = 1;
+        uint32 bid = 2;
+    }
+    oneof result { // result contains at max one of these
+        uint32 highest_bid = 1;
+        Winner winner = 2;
+    }
+}
+
+service AuctionService {
+    rpc MakeBid(MakeBidRequest) returns (MakeBidResponse);
+    rpc GetResult(GetResultRequest) returns (GetResultResponse);
+}

@@ -1,0 +1,37 @@
+syntax = "proto3";
+package grpc;
+option go_package = "replicated_auction/grpc/private";
+
+message HiIExistRequest {
+    uint32 id = 1;
+    string port = 2;
+}
+message HiIExistResponse {
+    message Servers {
+        uint32 id = 1;
+        string port = 2;
+    }
+    repeated Servers servers = 1;
+}
+
+message CallElectionRequest {
+    uint32 my_id = 1;
+}
+message CallElectionResponse {
+    uint32 leader_id = 1;
+}
+
+message DataUpdatedRequest {
+    uint32 bidder_id = 1;
+    uint32 bid = 2;
+    uint32 end_unixtime = 3;
+}
+message DataUpdatedResponse {
+}
+
+service LeaderService {
+    rpc HiIExist(HiIExistRequest) returns (HiIExistResponse);
+    rpc CallElection(CallElectionRequest) returns (CallElectionResponse);
+
+    rpc DataUpdated(DataUpdatedRequest) returns (DataUpdatedResponse);
+}
