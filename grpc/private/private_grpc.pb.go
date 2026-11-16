@@ -19,8 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	LeaderService_Echo_FullMethodName         = "/grpc.LeaderService/Echo"
 	LeaderService_HiIExist_FullMethodName     = "/grpc.LeaderService/HiIExist"
 	LeaderService_CallElection_FullMethodName = "/grpc.LeaderService/CallElection"
+	LeaderService_IAmLeader_FullMethodName    = "/grpc.LeaderService/IAmLeader"
 	LeaderService_DataUpdated_FullMethodName  = "/grpc.LeaderService/DataUpdated"
 )
 
@@ -28,8 +30,10 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LeaderServiceClient interface {
+	Echo(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error)
 	HiIExist(ctx context.Context, in *HiIExistRequest, opts ...grpc.CallOption) (*HiIExistResponse, error)
 	CallElection(ctx context.Context, in *CallElectionRequest, opts ...grpc.CallOption) (*CallElectionResponse, error)
+	IAmLeader(ctx context.Context, in *IAmLeaderRequest, opts ...grpc.CallOption) (*IAmLeaderResponse, error)
 	DataUpdated(ctx context.Context, in *DataUpdatedRequest, opts ...grpc.CallOption) (*DataUpdatedResponse, error)
 }
 
@@ -39,6 +43,16 @@ type leaderServiceClient struct {
 
 func NewLeaderServiceClient(cc grpc.ClientConnInterface) LeaderServiceClient {
 	return &leaderServiceClient{cc}
+}
+
+func (c *leaderServiceClient) Echo(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EchoResponse)
+	err := c.cc.Invoke(ctx, LeaderService_Echo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *leaderServiceClient) HiIExist(ctx context.Context, in *HiIExistRequest, opts ...grpc.CallOption) (*HiIExistResponse, error) {
@@ -61,6 +75,16 @@ func (c *leaderServiceClient) CallElection(ctx context.Context, in *CallElection
 	return out, nil
 }
 
+func (c *leaderServiceClient) IAmLeader(ctx context.Context, in *IAmLeaderRequest, opts ...grpc.CallOption) (*IAmLeaderResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IAmLeaderResponse)
+	err := c.cc.Invoke(ctx, LeaderService_IAmLeader_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *leaderServiceClient) DataUpdated(ctx context.Context, in *DataUpdatedRequest, opts ...grpc.CallOption) (*DataUpdatedResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DataUpdatedResponse)
@@ -75,8 +99,10 @@ func (c *leaderServiceClient) DataUpdated(ctx context.Context, in *DataUpdatedRe
 // All implementations must embed UnimplementedLeaderServiceServer
 // for forward compatibility.
 type LeaderServiceServer interface {
+	Echo(context.Context, *EchoRequest) (*EchoResponse, error)
 	HiIExist(context.Context, *HiIExistRequest) (*HiIExistResponse, error)
 	CallElection(context.Context, *CallElectionRequest) (*CallElectionResponse, error)
+	IAmLeader(context.Context, *IAmLeaderRequest) (*IAmLeaderResponse, error)
 	DataUpdated(context.Context, *DataUpdatedRequest) (*DataUpdatedResponse, error)
 	mustEmbedUnimplementedLeaderServiceServer()
 }
@@ -88,11 +114,17 @@ type LeaderServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedLeaderServiceServer struct{}
 
+func (UnimplementedLeaderServiceServer) Echo(context.Context, *EchoRequest) (*EchoResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Echo not implemented")
+}
 func (UnimplementedLeaderServiceServer) HiIExist(context.Context, *HiIExistRequest) (*HiIExistResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method HiIExist not implemented")
 }
 func (UnimplementedLeaderServiceServer) CallElection(context.Context, *CallElectionRequest) (*CallElectionResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CallElection not implemented")
+}
+func (UnimplementedLeaderServiceServer) IAmLeader(context.Context, *IAmLeaderRequest) (*IAmLeaderResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method IAmLeader not implemented")
 }
 func (UnimplementedLeaderServiceServer) DataUpdated(context.Context, *DataUpdatedRequest) (*DataUpdatedResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DataUpdated not implemented")
@@ -116,6 +148,24 @@ func RegisterLeaderServiceServer(s grpc.ServiceRegistrar, srv LeaderServiceServe
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&LeaderService_ServiceDesc, srv)
+}
+
+func _LeaderService_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EchoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LeaderServiceServer).Echo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LeaderService_Echo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LeaderServiceServer).Echo(ctx, req.(*EchoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _LeaderService_HiIExist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -154,6 +204,24 @@ func _LeaderService_CallElection_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LeaderService_IAmLeader_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IAmLeaderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LeaderServiceServer).IAmLeader(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LeaderService_IAmLeader_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LeaderServiceServer).IAmLeader(ctx, req.(*IAmLeaderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _LeaderService_DataUpdated_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DataUpdatedRequest)
 	if err := dec(in); err != nil {
@@ -180,12 +248,20 @@ var LeaderService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*LeaderServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "Echo",
+			Handler:    _LeaderService_Echo_Handler,
+		},
+		{
 			MethodName: "HiIExist",
 			Handler:    _LeaderService_HiIExist_Handler,
 		},
 		{
 			MethodName: "CallElection",
 			Handler:    _LeaderService_CallElection_Handler,
+		},
+		{
+			MethodName: "IAmLeader",
+			Handler:    _LeaderService_IAmLeader_Handler,
 		},
 		{
 			MethodName: "DataUpdated",

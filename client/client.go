@@ -8,7 +8,6 @@ import (
 	"path"
 	proto "replicated_auction/grpc/public"
 	"strings"
-	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -60,22 +59,29 @@ func main() {
 	conn := try_connect();
 
 	client := proto.NewAuctionServiceClient(conn)
+	var timestamp uint64
 
-	
+	timestamp += 1;
 	res, resErr := client.MakeBid(context.Background(), &proto.MakeBidRequest{
 		Bid: 0,
+		Timestamp: timestamp,
 	});
 	for resErr != nil || res == nil {
 		log.Printf("Connection failed, retrying connection...")
 		conn = try_connect();
+		timestamp += 1;
 		res, resErr = client.MakeBid(context.Background(), &proto.MakeBidRequest{
 			Bid: 0,
+			Timestamp: timestamp,
 		});
 	}
+	timestamp = max(timestamp, res.Timestamp)
+	timestamp += 1
+
 	id := res.YourId;
 	// yay
 
 	// todo: implement random bidding behavior :=)
-	
+
 	conn.Close()
 }

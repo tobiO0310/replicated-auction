@@ -5,13 +5,17 @@ option go_package = "replicated_auction/grpc/public";
 message MakeBidRequest {
     uint32 bid = 1;
     optional uint32 my_id = 2;
+    uint64 timestamp = 3;
 }
 message MakeBidResponse {
     bool success = 1;
     uint32 your_id = 2;
+    uint64 timestamp = 3;
 }
 
-message GetResultRequest {}
+message GetResultRequest {
+    uint64 timestamp = 1;
+}
 message GetResultResponse {
     message Winner {
         uint32 bidder_id = 1;
@@ -21,6 +25,7 @@ message GetResultResponse {
         uint32 highest_bid = 1;
         Winner winner = 2;
     }
+    uint64 timestamp = 3;
 }
 
 service AuctionService {

@@ -25,6 +25,7 @@ type MakeBidRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Bid           uint32                 `protobuf:"varint,1,opt,name=bid,proto3" json:"bid,omitempty"`
 	MyId          *uint32                `protobuf:"varint,2,opt,name=my_id,json=myId,proto3,oneof" json:"my_id,omitempty"`
+	Timestamp     uint64                 `protobuf:"varint,3,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -73,10 +74,18 @@ func (x *MakeBidRequest) GetMyId() uint32 {
 	return 0
 }
 
+func (x *MakeBidRequest) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
 type MakeBidResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	YourId        uint32                 `protobuf:"varint,2,opt,name=your_id,json=yourId,proto3" json:"your_id,omitempty"`
+	Timestamp     uint64                 `protobuf:"varint,3,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -125,8 +134,16 @@ func (x *MakeBidResponse) GetYourId() uint32 {
 	return 0
 }
 
+func (x *MakeBidResponse) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
 type GetResultRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Timestamp     uint64                 `protobuf:"varint,1,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -161,6 +178,13 @@ func (*GetResultRequest) Descriptor() ([]byte, []int) {
 	return file_grpc_public_public_proto_rawDescGZIP(), []int{2}
 }
 
+func (x *GetResultRequest) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
 type GetResultResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Result:
@@ -168,6 +192,7 @@ type GetResultResponse struct {
 	//	*GetResultResponse_HighestBid
 	//	*GetResultResponse_Winner_
 	Result        isGetResultResponse_Result `protobuf_oneof:"result"`
+	Timestamp     uint64                     `protobuf:"varint,3,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -225,6 +250,13 @@ func (x *GetResultResponse) GetWinner() *GetResultResponse_Winner {
 		}
 	}
 	return nil
+}
+
+func (x *GetResultResponse) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
 }
 
 type isGetResultResponse_Result interface {
@@ -299,19 +331,23 @@ var File_grpc_public_public_proto protoreflect.FileDescriptor
 
 const file_grpc_public_public_proto_rawDesc = "" +
 	"\n" +
-	"\x18grpc/public/public.proto\x12\x04grpc\"F\n" +
+	"\x18grpc/public/public.proto\x12\x04grpc\"d\n" +
 	"\x0eMakeBidRequest\x12\x10\n" +
 	"\x03bid\x18\x01 \x01(\rR\x03bid\x12\x18\n" +
-	"\x05my_id\x18\x02 \x01(\rH\x00R\x04myId\x88\x01\x01B\b\n" +
-	"\x06_my_id\"D\n" +
+	"\x05my_id\x18\x02 \x01(\rH\x00R\x04myId\x88\x01\x01\x12\x1c\n" +
+	"\ttimestamp\x18\x03 \x01(\x04R\ttimestampB\b\n" +
+	"\x06_my_id\"b\n" +
 	"\x0fMakeBidResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x17\n" +
-	"\ayour_id\x18\x02 \x01(\rR\x06yourId\"\x12\n" +
-	"\x10GetResultRequest\"\xb3\x01\n" +
+	"\ayour_id\x18\x02 \x01(\rR\x06yourId\x12\x1c\n" +
+	"\ttimestamp\x18\x03 \x01(\x04R\ttimestamp\"0\n" +
+	"\x10GetResultRequest\x12\x1c\n" +
+	"\ttimestamp\x18\x01 \x01(\x04R\ttimestamp\"\xd1\x01\n" +
 	"\x11GetResultResponse\x12!\n" +
 	"\vhighest_bid\x18\x01 \x01(\rH\x00R\n" +
 	"highestBid\x128\n" +
-	"\x06winner\x18\x02 \x01(\v2\x1e.grpc.GetResultResponse.WinnerH\x00R\x06winner\x1a7\n" +
+	"\x06winner\x18\x02 \x01(\v2\x1e.grpc.GetResultResponse.WinnerH\x00R\x06winner\x12\x1c\n" +
+	"\ttimestamp\x18\x03 \x01(\x04R\ttimestamp\x1a7\n" +
 	"\x06Winner\x12\x1b\n" +
 	"\tbidder_id\x18\x01 \x01(\rR\bbidderId\x12\x10\n" +
 	"\x03bid\x18\x02 \x01(\rR\x03bidB\b\n" +

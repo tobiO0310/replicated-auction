@@ -21,17 +21,90 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type EchoRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EchoRequest) Reset() {
+	*x = EchoRequest{}
+	mi := &file_grpc_private_private_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EchoRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EchoRequest) ProtoMessage() {}
+
+func (x *EchoRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_grpc_private_private_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EchoRequest.ProtoReflect.Descriptor instead.
+func (*EchoRequest) Descriptor() ([]byte, []int) {
+	return file_grpc_private_private_proto_rawDescGZIP(), []int{0}
+}
+
+type EchoResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EchoResponse) Reset() {
+	*x = EchoResponse{}
+	mi := &file_grpc_private_private_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EchoResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EchoResponse) ProtoMessage() {}
+
+func (x *EchoResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_grpc_private_private_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EchoResponse.ProtoReflect.Descriptor instead.
+func (*EchoResponse) Descriptor() ([]byte, []int) {
+	return file_grpc_private_private_proto_rawDescGZIP(), []int{1}
+}
+
 type HiIExistRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Port          string                 `protobuf:"bytes,2,opt,name=port,proto3" json:"port,omitempty"`
+	Timestamp     uint64                 `protobuf:"varint,3,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *HiIExistRequest) Reset() {
 	*x = HiIExistRequest{}
-	mi := &file_grpc_private_private_proto_msgTypes[0]
+	mi := &file_grpc_private_private_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +116,7 @@ func (x *HiIExistRequest) String() string {
 func (*HiIExistRequest) ProtoMessage() {}
 
 func (x *HiIExistRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_grpc_private_private_proto_msgTypes[0]
+	mi := &file_grpc_private_private_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +129,7 @@ func (x *HiIExistRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HiIExistRequest.ProtoReflect.Descriptor instead.
 func (*HiIExistRequest) Descriptor() ([]byte, []int) {
-	return file_grpc_private_private_proto_rawDescGZIP(), []int{0}
+	return file_grpc_private_private_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *HiIExistRequest) GetId() uint32 {
@@ -73,16 +146,24 @@ func (x *HiIExistRequest) GetPort() string {
 	return ""
 }
 
+func (x *HiIExistRequest) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
 type HiIExistResponse struct {
 	state         protoimpl.MessageState      `protogen:"open.v1"`
 	Servers       []*HiIExistResponse_Servers `protobuf:"bytes,1,rep,name=servers,proto3" json:"servers,omitempty"`
+	Timestamp     uint64                      `protobuf:"varint,2,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *HiIExistResponse) Reset() {
 	*x = HiIExistResponse{}
-	mi := &file_grpc_private_private_proto_msgTypes[1]
+	mi := &file_grpc_private_private_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -94,7 +175,7 @@ func (x *HiIExistResponse) String() string {
 func (*HiIExistResponse) ProtoMessage() {}
 
 func (x *HiIExistResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_grpc_private_private_proto_msgTypes[1]
+	mi := &file_grpc_private_private_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -107,7 +188,7 @@ func (x *HiIExistResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HiIExistResponse.ProtoReflect.Descriptor instead.
 func (*HiIExistResponse) Descriptor() ([]byte, []int) {
-	return file_grpc_private_private_proto_rawDescGZIP(), []int{1}
+	return file_grpc_private_private_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *HiIExistResponse) GetServers() []*HiIExistResponse_Servers {
@@ -117,16 +198,24 @@ func (x *HiIExistResponse) GetServers() []*HiIExistResponse_Servers {
 	return nil
 }
 
+func (x *HiIExistResponse) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
 type CallElectionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	MyId          uint32                 `protobuf:"varint,1,opt,name=my_id,json=myId,proto3" json:"my_id,omitempty"`
+	Timestamp     uint64                 `protobuf:"varint,2,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CallElectionRequest) Reset() {
 	*x = CallElectionRequest{}
-	mi := &file_grpc_private_private_proto_msgTypes[2]
+	mi := &file_grpc_private_private_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -138,7 +227,7 @@ func (x *CallElectionRequest) String() string {
 func (*CallElectionRequest) ProtoMessage() {}
 
 func (x *CallElectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_grpc_private_private_proto_msgTypes[2]
+	mi := &file_grpc_private_private_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -151,7 +240,7 @@ func (x *CallElectionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CallElectionRequest.ProtoReflect.Descriptor instead.
 func (*CallElectionRequest) Descriptor() ([]byte, []int) {
-	return file_grpc_private_private_proto_rawDescGZIP(), []int{2}
+	return file_grpc_private_private_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CallElectionRequest) GetMyId() uint32 {
@@ -161,16 +250,24 @@ func (x *CallElectionRequest) GetMyId() uint32 {
 	return 0
 }
 
+func (x *CallElectionRequest) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
 type CallElectionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	LeaderId      uint32                 `protobuf:"varint,1,opt,name=leader_id,json=leaderId,proto3" json:"leader_id,omitempty"`
+	LeaderId      *uint32                `protobuf:"varint,1,opt,name=leader_id,json=leaderId,proto3,oneof" json:"leader_id,omitempty"`
+	Timestamp     uint64                 `protobuf:"varint,2,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CallElectionResponse) Reset() {
 	*x = CallElectionResponse{}
-	mi := &file_grpc_private_private_proto_msgTypes[3]
+	mi := &file_grpc_private_private_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -182,7 +279,7 @@ func (x *CallElectionResponse) String() string {
 func (*CallElectionResponse) ProtoMessage() {}
 
 func (x *CallElectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_grpc_private_private_proto_msgTypes[3]
+	mi := &file_grpc_private_private_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -195,12 +292,115 @@ func (x *CallElectionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CallElectionResponse.ProtoReflect.Descriptor instead.
 func (*CallElectionResponse) Descriptor() ([]byte, []int) {
-	return file_grpc_private_private_proto_rawDescGZIP(), []int{3}
+	return file_grpc_private_private_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CallElectionResponse) GetLeaderId() uint32 {
+	if x != nil && x.LeaderId != nil {
+		return *x.LeaderId
+	}
+	return 0
+}
+
+func (x *CallElectionResponse) GetTimestamp() uint64 {
 	if x != nil {
-		return x.LeaderId
+		return x.Timestamp
+	}
+	return 0
+}
+
+type IAmLeaderRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	MyId          uint32                 `protobuf:"varint,1,opt,name=my_id,json=myId,proto3" json:"my_id,omitempty"`
+	Timestamp     uint64                 `protobuf:"varint,2,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IAmLeaderRequest) Reset() {
+	*x = IAmLeaderRequest{}
+	mi := &file_grpc_private_private_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IAmLeaderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IAmLeaderRequest) ProtoMessage() {}
+
+func (x *IAmLeaderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_grpc_private_private_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IAmLeaderRequest.ProtoReflect.Descriptor instead.
+func (*IAmLeaderRequest) Descriptor() ([]byte, []int) {
+	return file_grpc_private_private_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *IAmLeaderRequest) GetMyId() uint32 {
+	if x != nil {
+		return x.MyId
+	}
+	return 0
+}
+
+func (x *IAmLeaderRequest) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
+type IAmLeaderResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Timestamp     uint64                 `protobuf:"varint,1,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IAmLeaderResponse) Reset() {
+	*x = IAmLeaderResponse{}
+	mi := &file_grpc_private_private_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IAmLeaderResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IAmLeaderResponse) ProtoMessage() {}
+
+func (x *IAmLeaderResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_grpc_private_private_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IAmLeaderResponse.ProtoReflect.Descriptor instead.
+func (*IAmLeaderResponse) Descriptor() ([]byte, []int) {
+	return file_grpc_private_private_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *IAmLeaderResponse) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
 	}
 	return 0
 }
@@ -210,13 +410,14 @@ type DataUpdatedRequest struct {
 	BidderId      uint32                 `protobuf:"varint,1,opt,name=bidder_id,json=bidderId,proto3" json:"bidder_id,omitempty"`
 	Bid           uint32                 `protobuf:"varint,2,opt,name=bid,proto3" json:"bid,omitempty"`
 	EndUnixtime   uint32                 `protobuf:"varint,3,opt,name=end_unixtime,json=endUnixtime,proto3" json:"end_unixtime,omitempty"`
+	Timestamp     uint64                 `protobuf:"varint,4,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DataUpdatedRequest) Reset() {
 	*x = DataUpdatedRequest{}
-	mi := &file_grpc_private_private_proto_msgTypes[4]
+	mi := &file_grpc_private_private_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -228,7 +429,7 @@ func (x *DataUpdatedRequest) String() string {
 func (*DataUpdatedRequest) ProtoMessage() {}
 
 func (x *DataUpdatedRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_grpc_private_private_proto_msgTypes[4]
+	mi := &file_grpc_private_private_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -241,7 +442,7 @@ func (x *DataUpdatedRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DataUpdatedRequest.ProtoReflect.Descriptor instead.
 func (*DataUpdatedRequest) Descriptor() ([]byte, []int) {
-	return file_grpc_private_private_proto_rawDescGZIP(), []int{4}
+	return file_grpc_private_private_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *DataUpdatedRequest) GetBidderId() uint32 {
@@ -265,15 +466,23 @@ func (x *DataUpdatedRequest) GetEndUnixtime() uint32 {
 	return 0
 }
 
+func (x *DataUpdatedRequest) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
 type DataUpdatedResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Timestamp     uint64                 `protobuf:"varint,1,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DataUpdatedResponse) Reset() {
 	*x = DataUpdatedResponse{}
-	mi := &file_grpc_private_private_proto_msgTypes[5]
+	mi := &file_grpc_private_private_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -285,7 +494,7 @@ func (x *DataUpdatedResponse) String() string {
 func (*DataUpdatedResponse) ProtoMessage() {}
 
 func (x *DataUpdatedResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_grpc_private_private_proto_msgTypes[5]
+	mi := &file_grpc_private_private_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -298,7 +507,14 @@ func (x *DataUpdatedResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DataUpdatedResponse.ProtoReflect.Descriptor instead.
 func (*DataUpdatedResponse) Descriptor() ([]byte, []int) {
-	return file_grpc_private_private_proto_rawDescGZIP(), []int{5}
+	return file_grpc_private_private_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *DataUpdatedResponse) GetTimestamp() uint64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
 }
 
 type HiIExistResponse_Servers struct {
@@ -311,7 +527,7 @@ type HiIExistResponse_Servers struct {
 
 func (x *HiIExistResponse_Servers) Reset() {
 	*x = HiIExistResponse_Servers{}
-	mi := &file_grpc_private_private_proto_msgTypes[6]
+	mi := &file_grpc_private_private_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -323,7 +539,7 @@ func (x *HiIExistResponse_Servers) String() string {
 func (*HiIExistResponse_Servers) ProtoMessage() {}
 
 func (x *HiIExistResponse_Servers) ProtoReflect() protoreflect.Message {
-	mi := &file_grpc_private_private_proto_msgTypes[6]
+	mi := &file_grpc_private_private_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -336,7 +552,7 @@ func (x *HiIExistResponse_Servers) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HiIExistResponse_Servers.ProtoReflect.Descriptor instead.
 func (*HiIExistResponse_Servers) Descriptor() ([]byte, []int) {
-	return file_grpc_private_private_proto_rawDescGZIP(), []int{1, 0}
+	return file_grpc_private_private_proto_rawDescGZIP(), []int{3, 0}
 }
 
 func (x *HiIExistResponse_Servers) GetId() uint32 {
@@ -357,27 +573,44 @@ var File_grpc_private_private_proto protoreflect.FileDescriptor
 
 const file_grpc_private_private_proto_rawDesc = "" +
 	"\n" +
-	"\x1agrpc/private/private.proto\x12\x04grpc\"5\n" +
+	"\x1agrpc/private/private.proto\x12\x04grpc\"\r\n" +
+	"\vEchoRequest\"\x0e\n" +
+	"\fEchoResponse\"S\n" +
 	"\x0fHiIExistRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id\x12\x12\n" +
-	"\x04port\x18\x02 \x01(\tR\x04port\"{\n" +
+	"\x04port\x18\x02 \x01(\tR\x04port\x12\x1c\n" +
+	"\ttimestamp\x18\x03 \x01(\x04R\ttimestamp\"\x99\x01\n" +
 	"\x10HiIExistResponse\x128\n" +
-	"\aservers\x18\x01 \x03(\v2\x1e.grpc.HiIExistResponse.ServersR\aservers\x1a-\n" +
+	"\aservers\x18\x01 \x03(\v2\x1e.grpc.HiIExistResponse.ServersR\aservers\x12\x1c\n" +
+	"\ttimestamp\x18\x02 \x01(\x04R\ttimestamp\x1a-\n" +
 	"\aServers\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id\x12\x12\n" +
-	"\x04port\x18\x02 \x01(\tR\x04port\"*\n" +
+	"\x04port\x18\x02 \x01(\tR\x04port\"H\n" +
 	"\x13CallElectionRequest\x12\x13\n" +
-	"\x05my_id\x18\x01 \x01(\rR\x04myId\"3\n" +
-	"\x14CallElectionResponse\x12\x1b\n" +
-	"\tleader_id\x18\x01 \x01(\rR\bleaderId\"f\n" +
+	"\x05my_id\x18\x01 \x01(\rR\x04myId\x12\x1c\n" +
+	"\ttimestamp\x18\x02 \x01(\x04R\ttimestamp\"d\n" +
+	"\x14CallElectionResponse\x12 \n" +
+	"\tleader_id\x18\x01 \x01(\rH\x00R\bleaderId\x88\x01\x01\x12\x1c\n" +
+	"\ttimestamp\x18\x02 \x01(\x04R\ttimestampB\f\n" +
+	"\n" +
+	"_leader_id\"E\n" +
+	"\x10IAmLeaderRequest\x12\x13\n" +
+	"\x05my_id\x18\x01 \x01(\rR\x04myId\x12\x1c\n" +
+	"\ttimestamp\x18\x02 \x01(\x04R\ttimestamp\"1\n" +
+	"\x11IAmLeaderResponse\x12\x1c\n" +
+	"\ttimestamp\x18\x01 \x01(\x04R\ttimestamp\"\x84\x01\n" +
 	"\x12DataUpdatedRequest\x12\x1b\n" +
 	"\tbidder_id\x18\x01 \x01(\rR\bbidderId\x12\x10\n" +
 	"\x03bid\x18\x02 \x01(\rR\x03bid\x12!\n" +
-	"\fend_unixtime\x18\x03 \x01(\rR\vendUnixtime\"\x15\n" +
-	"\x13DataUpdatedResponse2\xd5\x01\n" +
-	"\rLeaderService\x129\n" +
+	"\fend_unixtime\x18\x03 \x01(\rR\vendUnixtime\x12\x1c\n" +
+	"\ttimestamp\x18\x04 \x01(\x04R\ttimestamp\"3\n" +
+	"\x13DataUpdatedResponse\x12\x1c\n" +
+	"\ttimestamp\x18\x01 \x01(\x04R\ttimestamp2\xc2\x02\n" +
+	"\rLeaderService\x12-\n" +
+	"\x04Echo\x12\x11.grpc.EchoRequest\x1a\x12.grpc.EchoResponse\x129\n" +
 	"\bHiIExist\x12\x15.grpc.HiIExistRequest\x1a\x16.grpc.HiIExistResponse\x12E\n" +
-	"\fCallElection\x12\x19.grpc.CallElectionRequest\x1a\x1a.grpc.CallElectionResponse\x12B\n" +
+	"\fCallElection\x12\x19.grpc.CallElectionRequest\x1a\x1a.grpc.CallElectionResponse\x12<\n" +
+	"\tIAmLeader\x12\x16.grpc.IAmLeaderRequest\x1a\x17.grpc.IAmLeaderResponse\x12B\n" +
 	"\vDataUpdated\x12\x18.grpc.DataUpdatedRequest\x1a\x19.grpc.DataUpdatedResponseB!Z\x1freplicated_auction/grpc/privateb\x06proto3"
 
 var (
@@ -392,29 +625,37 @@ func file_grpc_private_private_proto_rawDescGZIP() []byte {
 	return file_grpc_private_private_proto_rawDescData
 }
 
-var file_grpc_private_private_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_grpc_private_private_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_grpc_private_private_proto_goTypes = []any{
-	(*HiIExistRequest)(nil),          // 0: grpc.HiIExistRequest
-	(*HiIExistResponse)(nil),         // 1: grpc.HiIExistResponse
-	(*CallElectionRequest)(nil),      // 2: grpc.CallElectionRequest
-	(*CallElectionResponse)(nil),     // 3: grpc.CallElectionResponse
-	(*DataUpdatedRequest)(nil),       // 4: grpc.DataUpdatedRequest
-	(*DataUpdatedResponse)(nil),      // 5: grpc.DataUpdatedResponse
-	(*HiIExistResponse_Servers)(nil), // 6: grpc.HiIExistResponse.Servers
+	(*EchoRequest)(nil),              // 0: grpc.EchoRequest
+	(*EchoResponse)(nil),             // 1: grpc.EchoResponse
+	(*HiIExistRequest)(nil),          // 2: grpc.HiIExistRequest
+	(*HiIExistResponse)(nil),         // 3: grpc.HiIExistResponse
+	(*CallElectionRequest)(nil),      // 4: grpc.CallElectionRequest
+	(*CallElectionResponse)(nil),     // 5: grpc.CallElectionResponse
+	(*IAmLeaderRequest)(nil),         // 6: grpc.IAmLeaderRequest
+	(*IAmLeaderResponse)(nil),        // 7: grpc.IAmLeaderResponse
+	(*DataUpdatedRequest)(nil),       // 8: grpc.DataUpdatedRequest
+	(*DataUpdatedResponse)(nil),      // 9: grpc.DataUpdatedResponse
+	(*HiIExistResponse_Servers)(nil), // 10: grpc.HiIExistResponse.Servers
 }
 var file_grpc_private_private_proto_depIdxs = []int32{
-	6, // 0: grpc.HiIExistResponse.servers:type_name -> grpc.HiIExistResponse.Servers
-	0, // 1: grpc.LeaderService.HiIExist:input_type -> grpc.HiIExistRequest
-	2, // 2: grpc.LeaderService.CallElection:input_type -> grpc.CallElectionRequest
-	4, // 3: grpc.LeaderService.DataUpdated:input_type -> grpc.DataUpdatedRequest
-	1, // 4: grpc.LeaderService.HiIExist:output_type -> grpc.HiIExistResponse
-	3, // 5: grpc.LeaderService.CallElection:output_type -> grpc.CallElectionResponse
-	5, // 6: grpc.LeaderService.DataUpdated:output_type -> grpc.DataUpdatedResponse
-	4, // [4:7] is the sub-list for method output_type
-	1, // [1:4] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	10, // 0: grpc.HiIExistResponse.servers:type_name -> grpc.HiIExistResponse.Servers
+	0,  // 1: grpc.LeaderService.Echo:input_type -> grpc.EchoRequest
+	2,  // 2: grpc.LeaderService.HiIExist:input_type -> grpc.HiIExistRequest
+	4,  // 3: grpc.LeaderService.CallElection:input_type -> grpc.CallElectionRequest
+	6,  // 4: grpc.LeaderService.IAmLeader:input_type -> grpc.IAmLeaderRequest
+	8,  // 5: grpc.LeaderService.DataUpdated:input_type -> grpc.DataUpdatedRequest
+	1,  // 6: grpc.LeaderService.Echo:output_type -> grpc.EchoResponse
+	3,  // 7: grpc.LeaderService.HiIExist:output_type -> grpc.HiIExistResponse
+	5,  // 8: grpc.LeaderService.CallElection:output_type -> grpc.CallElectionResponse
+	7,  // 9: grpc.LeaderService.IAmLeader:output_type -> grpc.IAmLeaderResponse
+	9,  // 10: grpc.LeaderService.DataUpdated:output_type -> grpc.DataUpdatedResponse
+	6,  // [6:11] is the sub-list for method output_type
+	1,  // [1:6] is the sub-list for method input_type
+	1,  // [1:1] is the sub-list for extension type_name
+	1,  // [1:1] is the sub-list for extension extendee
+	0,  // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_grpc_private_private_proto_init() }
@@ -422,13 +663,14 @@ func file_grpc_private_private_proto_init() {
 	if File_grpc_private_private_proto != nil {
 		return
 	}
+	file_grpc_private_private_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_grpc_private_private_proto_rawDesc), len(file_grpc_private_private_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
