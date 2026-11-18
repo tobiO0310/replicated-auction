@@ -81,7 +81,7 @@ func main() {
 
 	auction_service := &AuctionService{
 		leader_service: leader_service,
-		known_bidders: make([]Bidder, 10),
+		known_bidders: make([]Bidder, 0),
 	}
 	leader_service.auction_service = auction_service
 
@@ -103,7 +103,7 @@ func main() {
 
 		time.Sleep(150 * time.Millisecond) // let own server startup
 		conn := try_connect_leader_service_with_retry(actual_try_connect_port)
-		
+
 		if res := connect_conn(conn, actual_try_connect_port, leader_service); res != nil {
 			for _, server := range res {
 				serverConn := try_connect_leader_service_with_retry(server.Port)
@@ -114,14 +114,12 @@ func main() {
 				connect_conn(serverConn, server.Port, leader_service)
 			}
 		}
-
-		leader_service.timestamp += 1
+		leader_service.mutex.Unlock()
+		
 		leader_service.CallElection(context.Background(), &private.CallElectionRequest{
 			MyId: uint32(*my_id),
 			Timestamp: leader_service.timestamp,
 		})
-
-		leader_service.mutex.Unlock()
 	}()
 
 	// auction service
