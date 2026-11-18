@@ -163,6 +163,7 @@ func (self *LeaderService) Echo(ctx context.Context, in *proto.EchoRequest) (*pr
 }
 
 func (self *LeaderService) HiIExist(ctx context.Context, in *proto.HiIExistRequest) (*proto.HiIExistResponse, error) {
+	log.Printf("someone exists! they're %d at %s\n", in.Id, in.Port)
 	self.mutex.Lock()
 	defer self.mutex.Unlock()
 
@@ -191,6 +192,7 @@ func (self *LeaderService) HiIExist(ctx context.Context, in *proto.HiIExistReque
 }
 
 func (self *LeaderService) CallElection(ctx context.Context, in *proto.CallElectionRequest) (*proto.CallElectionResponse, error) {
+	log.Printf("received call election from %d\n", in.MyId)
 	self.mutex.Lock()
 	defer self.mutex.Unlock()
 
@@ -198,6 +200,7 @@ func (self *LeaderService) CallElection(ctx context.Context, in *proto.CallElect
 	self.timestamp += 1 // got message
 
 	for _, server := range self.servers_above_me() {
+		log.Printf("call election to %d\n", server.id)
 		client := proto.NewLeaderServiceClient(server.connection)
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
@@ -215,11 +218,14 @@ func (self *LeaderService) CallElection(ctx context.Context, in *proto.CallElect
 		self.timestamp += 1
 
 		if res.LeaderId != nil {
+			log.Printf("they found a leader! new leader id: %d\n", res.LeaderId)
 			self.timestamp += 1
 			res.Timestamp = self.timestamp
 			return res, nil
 		}
 	}
+	
+	log.Printf("I AM LEADER NOW. i shall tell everyone!\n")
 
 	// no leader above me, i must be leader then
 
@@ -232,6 +238,8 @@ func (self *LeaderService) CallElection(ctx context.Context, in *proto.CallElect
 		})
 	}
 
+	
+	log.Printf("telling clients where to look now\n")
 	pwd, pwdErr := os.Getwd()
 	if pwdErr != nil {
 		log.Fatalln("Could not get current working directory, please try again later")
@@ -248,6 +256,7 @@ func (self *LeaderService) CallElection(ctx context.Context, in *proto.CallElect
 }
 
 func (self *LeaderService) IAmLeader(ctx context.Context, in *proto.IAmLeaderRequest) (*proto.IAmLeaderResponse, error) {
+	log.Printf("received i am leader message from %d\n", in.MyId)
 	self.mutex.Lock()
 	defer self.mutex.Unlock()
 
@@ -261,6 +270,7 @@ func (self *LeaderService) IAmLeader(ctx context.Context, in *proto.IAmLeaderReq
 }
 
 func (self *LeaderService) DataUpdated(ctx context.Context, in *proto.DataUpdatedRequest) (*proto.DataUpdatedResponse, error) {
+	log.Printf("received data update from leader\n")
 	self.mutex.Lock()
 	defer self.mutex.Unlock()
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	proto "replicated_auction/grpc/public"
 	"sync"
 	"time"
@@ -60,6 +61,11 @@ func (self *AuctionService) bid(bidder_id uint32, bid uint32) bool {
 }
 
 func (self *AuctionService) MakeBid(ctx context.Context, in *proto.MakeBidRequest) (*proto.MakeBidResponse, error) {
+	if in.MyId != nil {
+		log.Printf("someone's bidding??? %d bids %d!\n", *in.MyId, in.Bid)
+	} else {
+		log.Printf("someone's bidding??? nil bids %d!\n", in.Bid)
+	}
 	self.mutex.Lock()
 	defer self.mutex.Unlock()
 
@@ -128,6 +134,7 @@ func (self *AuctionService) MakeBid(ctx context.Context, in *proto.MakeBidReques
 }
 
 func (self *AuctionService) GetResult(ctx context.Context, in *proto.GetResultRequest) (*proto.GetResultResponse, error) {
+	log.Printf("someone wanna snitch on the winner... let's see if there are any")
 	self.mutex.Lock()
 	defer self.mutex.Unlock()
 
