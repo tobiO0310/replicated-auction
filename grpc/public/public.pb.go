@@ -83,9 +83,8 @@ func (x *MakeBidRequest) GetTimestamp() uint64 {
 
 type MakeBidResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	YourId        uint32                 `protobuf:"varint,2,opt,name=your_id,json=yourId,proto3" json:"your_id,omitempty"`
-	Timestamp     uint64                 `protobuf:"varint,3,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	YourId        uint32                 `protobuf:"varint,1,opt,name=your_id,json=yourId,proto3" json:"your_id,omitempty"`
+	Timestamp     uint64                 `protobuf:"varint,2,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -118,13 +117,6 @@ func (x *MakeBidResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use MakeBidResponse.ProtoReflect.Descriptor instead.
 func (*MakeBidResponse) Descriptor() ([]byte, []int) {
 	return file_grpc_public_public_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *MakeBidResponse) GetSuccess() bool {
-	if x != nil {
-		return x.Success
-	}
-	return false
 }
 
 func (x *MakeBidResponse) GetYourId() uint32 {
@@ -336,11 +328,10 @@ const file_grpc_public_public_proto_rawDesc = "" +
 	"\x03bid\x18\x01 \x01(\rR\x03bid\x12\x18\n" +
 	"\x05my_id\x18\x02 \x01(\rH\x00R\x04myId\x88\x01\x01\x12\x1c\n" +
 	"\ttimestamp\x18\x03 \x01(\x04R\ttimestampB\b\n" +
-	"\x06_my_id\"b\n" +
-	"\x0fMakeBidResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x17\n" +
-	"\ayour_id\x18\x02 \x01(\rR\x06yourId\x12\x1c\n" +
-	"\ttimestamp\x18\x03 \x01(\x04R\ttimestamp\"0\n" +
+	"\x06_my_id\"H\n" +
+	"\x0fMakeBidResponse\x12\x17\n" +
+	"\ayour_id\x18\x01 \x01(\rR\x06yourId\x12\x1c\n" +
+	"\ttimestamp\x18\x02 \x01(\x04R\ttimestamp\"0\n" +
 	"\x10GetResultRequest\x12\x1c\n" +
 	"\ttimestamp\x18\x01 \x01(\x04R\ttimestamp\"\xd1\x01\n" +
 	"\x11GetResultResponse\x12!\n" +

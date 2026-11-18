@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
+	"path"
 	proto "replicated_auction/grpc/private"
 	"strings"
 	"sync"
@@ -15,6 +17,8 @@ import (
 	"google.golang.org/grpc/keepalive"
 )
 
+var LEADER_FILE_NAME = "LEADER_PORT.txt"
+
 type Server struct {
 	id         uint32
 	port       string
@@ -24,9 +28,13 @@ type Server struct {
 type LeaderService struct {
 	proto.UnimplementedLeaderServiceServer
 
+	auction_service *AuctionService
+
 	timestamp uint64
 	mutex     sync.Mutex
 	my_id     uint32
+	my_port   uint32
+	my_auction_port uint32
 	leader_id *uint32
 	servers   map[uint32]Server
 }
@@ -50,7 +58,7 @@ var kasp = keepalive.ServerParameters{
 	Timeout:               1 * time.Second,  // Wait 1 second for the ping ack before assuming the connection is dead
 }
 
-func try_connect_leader(port string) *grpc.ClientConn {
+func try_connect_leader_service_with_retry(port string) *grpc.ClientConn {
 	conn, connErr := grpc.NewClient(
 		fmt.Sprintf("localhost:%s", strings.TrimSpace(port)),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -99,14 +107,41 @@ func (self *LeaderService) servers_above_me() []*Server {
 	return arr
 }
 
-func NewLeaderService(id uint32) *LeaderService {
+func (self *LeaderService) updateServers(bidderId uint32, bid uint32, endUnixtime uint32, timestamp uint64) uint64 {
+	for _, server := range self.servers {
+		client := proto.NewLeaderServiceClient(server.connection)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		timestamp += 1
+		res, err := client.DataUpdated(ctx, &proto.DataUpdatedRequest{
+			BidderId:    bidderId,
+			Bid:         bid,
+			EndUnixtime: endUnixtime,
+			Timestamp:   timestamp,
+		})
+		if err != nil || res == nil {
+			// assume server died :)
+			delete(self.servers, server.id)
+			continue
+		}
+		timestamp = max(timestamp, res.Timestamp)
+		timestamp += 1
+	}
+	return timestamp
+}
+
+func NewLeaderService(id uint32, port uint32, auction_port uint32) *LeaderService {
 	service := &LeaderService{
-		my_id: id,
+		my_id:   id,
+		my_port: port,
+		my_auction_port: auction_port,
+		servers: make(map[uint32]Server),
 	}
 
 	go func() {
 		for {
-			if service.leader_id != nil {
+			if service.leader_id != nil && *service.leader_id != service.my_id {
 				client := proto.NewLeaderServiceClient(service.servers[*service.leader_id].connection)
 				res, err := client.Echo(context.Background(), &proto.EchoRequest{})
 				if err != nil || res == nil {
@@ -136,7 +171,7 @@ func (self *LeaderService) HiIExist(ctx context.Context, in *proto.HiIExistReque
 
 	other_servers := self.map_servers()
 
-	conn := try_connect_leader(in.Port)
+	conn := try_connect_leader_service_with_retry(in.Port)
 	if conn == nil {
 		return nil, errors.New("could not connect to you")
 	}
@@ -148,7 +183,11 @@ func (self *LeaderService) HiIExist(ctx context.Context, in *proto.HiIExistReque
 	}
 
 	self.timestamp += 1 // send message
-	return &proto.HiIExistResponse{Timestamp: self.timestamp, Servers: other_servers}, nil
+	return &proto.HiIExistResponse{
+		Timestamp: self.timestamp,
+		Servers: other_servers,
+		MyId: self.my_id,
+	}, nil
 }
 
 func (self *LeaderService) CallElection(ctx context.Context, in *proto.CallElectionRequest) (*proto.CallElectionResponse, error) {
@@ -193,7 +232,15 @@ func (self *LeaderService) CallElection(ctx context.Context, in *proto.CallElect
 		})
 	}
 
+	pwd, pwdErr := os.Getwd()
+	if pwdErr != nil {
+		log.Fatalln("Could not get current working directory, please try again later")
+	}
+	file := path.Join(pwd, LEADER_FILE_NAME)
+	os.WriteFile(file, []byte(fmt.Sprintf("%d", self.my_auction_port)), 0644) // 0644 (unix permission) = owner can read & write, everyone else can read
+
 	self.timestamp += 1
+	self.leader_id = &self.my_id
 	return &proto.CallElectionResponse{
 		LeaderId:  &self.my_id,
 		Timestamp: self.timestamp,
@@ -211,4 +258,25 @@ func (self *LeaderService) IAmLeader(ctx context.Context, in *proto.IAmLeaderReq
 
 	self.timestamp += 1
 	return &proto.IAmLeaderResponse{Timestamp: self.timestamp}, nil
+}
+
+func (self *LeaderService) DataUpdated(ctx context.Context, in *proto.DataUpdatedRequest) (*proto.DataUpdatedResponse, error) {
+	self.mutex.Lock()
+	defer self.mutex.Unlock()
+
+	self.timestamp = max(self.timestamp, in.Timestamp)
+	self.timestamp += 1
+
+	if self.auction_service == nil {
+		self.timestamp += 1
+		return nil, errors.New("Missing auction service, help pls")
+	}
+
+	self.auction_service.bid(in.BidderId, in.Bid)
+	self.auction_service.end_unixtime = in.EndUnixtime
+
+	self.timestamp += 1
+	return &proto.DataUpdatedResponse{
+		Timestamp: self.timestamp,
+	}, nil
 }

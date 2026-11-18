@@ -17,6 +17,7 @@ message HiIExistResponse {
     }
     repeated Servers servers = 1;
     uint64 timestamp = 2;
+    uint32 my_id = 3;
 }
 
 message CallElectionRequest {

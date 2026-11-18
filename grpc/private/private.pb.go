@@ -157,6 +157,7 @@ type HiIExistResponse struct {
 	state         protoimpl.MessageState      `protogen:"open.v1"`
 	Servers       []*HiIExistResponse_Servers `protobuf:"bytes,1,rep,name=servers,proto3" json:"servers,omitempty"`
 	Timestamp     uint64                      `protobuf:"varint,2,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	MyId          uint32                      `protobuf:"varint,3,opt,name=my_id,json=myId,proto3" json:"my_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -201,6 +202,13 @@ func (x *HiIExistResponse) GetServers() []*HiIExistResponse_Servers {
 func (x *HiIExistResponse) GetTimestamp() uint64 {
 	if x != nil {
 		return x.Timestamp
+	}
+	return 0
+}
+
+func (x *HiIExistResponse) GetMyId() uint32 {
+	if x != nil {
+		return x.MyId
 	}
 	return 0
 }
@@ -579,10 +587,11 @@ const file_grpc_private_private_proto_rawDesc = "" +
 	"\x0fHiIExistRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id\x12\x12\n" +
 	"\x04port\x18\x02 \x01(\tR\x04port\x12\x1c\n" +
-	"\ttimestamp\x18\x03 \x01(\x04R\ttimestamp\"\x99\x01\n" +
+	"\ttimestamp\x18\x03 \x01(\x04R\ttimestamp\"\xae\x01\n" +
 	"\x10HiIExistResponse\x128\n" +
 	"\aservers\x18\x01 \x03(\v2\x1e.grpc.HiIExistResponse.ServersR\aservers\x12\x1c\n" +
-	"\ttimestamp\x18\x02 \x01(\x04R\ttimestamp\x1a-\n" +
+	"\ttimestamp\x18\x02 \x01(\x04R\ttimestamp\x12\x13\n" +
+	"\x05my_id\x18\x03 \x01(\rR\x04myId\x1a-\n" +
 	"\aServers\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\rR\x02id\x12\x12\n" +
 	"\x04port\x18\x02 \x01(\tR\x04port\"H\n" +

@@ -8,9 +8,8 @@ message MakeBidRequest {
     uint64 timestamp = 3;
 }
 message MakeBidResponse {
-    bool success = 1;
-    uint32 your_id = 2;
-    uint64 timestamp = 3;
+    uint32 your_id = 1;
+    uint64 timestamp = 2;
 }
 
 message GetResultRequest {
