@@ -53,8 +53,8 @@ func connect_conn(conn *grpc.ClientConn, port string, leader_service *LeaderServ
 
 	leader_service.timestamp += 1
 	res, err := client.HiIExist(ctx, &private.HiIExistRequest{
-		Id: uint32(*my_id),
-		Port: fmt.Sprintf("%d", *leader_port),
+		Id:        uint32(*my_id),
+		Port:      fmt.Sprintf("%d", *leader_port),
 		Timestamp: leader_service.timestamp,
 	})
 	if err != nil || res == nil {
@@ -64,9 +64,9 @@ func connect_conn(conn *grpc.ClientConn, port string, leader_service *LeaderServ
 	leader_service.timestamp = max(leader_service.timestamp, res.Timestamp)
 	leader_service.timestamp += 1
 
-	leader_service.servers[res.MyId] = Server {
-		id: res.MyId,
-		port: port,
+	leader_service.servers[res.MyId] = Server{
+		id:         res.MyId,
+		port:       port,
 		connection: conn,
 	}
 
@@ -80,7 +80,7 @@ func main() {
 
 	auction_service := &AuctionService{
 		leader_service: leader_service,
-		known_bidders: make([]Bidder, 0),
+		known_bidders:  make([]Bidder, 0),
 	}
 	leader_service.auction_service = auction_service
 
@@ -121,9 +121,9 @@ func main() {
 			}
 		}
 		leader_service.mutex.Unlock()
-		
+
 		leader_service.CallElection(context.Background(), &private.CallElectionRequest{
-			MyId: uint32(*my_id),
+			MyId:      uint32(*my_id),
 			Timestamp: leader_service.timestamp,
 		})
 	}()

@@ -30,13 +30,13 @@ type LeaderService struct {
 
 	auction_service *AuctionService
 
-	timestamp uint64
-	mutex     sync.Mutex
-	my_id     uint32
-	my_port   uint32
+	timestamp       uint64
+	mutex           sync.Mutex
+	my_id           uint32
+	my_port         uint32
 	my_auction_port uint32
-	leader_id *uint32
-	servers   map[uint32]Server
+	leader_id       *uint32
+	servers         map[uint32]Server
 }
 
 var kacp = keepalive.ClientParameters{
@@ -135,10 +135,10 @@ func (self *LeaderService) updateServers(bidderId uint32, bid uint32, endUnixtim
 
 func NewLeaderService(id uint32, port uint32, auction_port uint32) *LeaderService {
 	service := &LeaderService{
-		my_id:   id,
-		my_port: port,
+		my_id:           id,
+		my_port:         port,
 		my_auction_port: auction_port,
-		servers: make(map[uint32]Server),
+		servers:         make(map[uint32]Server),
 	}
 
 	go func() {
@@ -188,8 +188,8 @@ func (self *LeaderService) HiIExist(ctx context.Context, in *proto.HiIExistReque
 	self.timestamp += 1 // send message
 	return &proto.HiIExistResponse{
 		Timestamp: self.timestamp,
-		Servers: other_servers,
-		MyId: self.my_id,
+		Servers:   other_servers,
+		MyId:      self.my_id,
 	}, nil
 }
 
@@ -202,6 +202,9 @@ func (self *LeaderService) CallElection(ctx context.Context, in *proto.CallElect
 	self.timestamp += 1 // got message
 
 	for _, server := range self.servers_above_me() {
+		if server == nil {
+			continue
+		}
 		log.Printf("call election to %d\n", server.id)
 		client := proto.NewLeaderServiceClient(server.connection)
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -226,7 +229,7 @@ func (self *LeaderService) CallElection(ctx context.Context, in *proto.CallElect
 			return res, nil
 		}
 	}
-	
+
 	log.Printf("I AM LEADER NOW. i shall tell everyone!\n")
 
 	// no leader above me, i must be leader then
@@ -240,7 +243,6 @@ func (self *LeaderService) CallElection(ctx context.Context, in *proto.CallElect
 		})
 	}
 
-	
 	log.Printf("telling clients where to look now\n")
 	pwd, pwdErr := os.Getwd()
 	if pwdErr != nil {

@@ -20,13 +20,13 @@ func conn_is_ready(conn *grpc.ClientConn) bool {
 }
 
 func try_connect() *grpc.ClientConn {
-	pwd, pwdErr := os.Getwd();
+	pwd, pwdErr := os.Getwd()
 	if pwdErr != nil {
 		log.Fatalln("Could not get current working directory, please try again later")
 	}
 	file := path.Join(pwd, FILE_NAME)
 	log.Printf("Trying to read file %s\n", file)
-	content, fileErr := os.ReadFile(file);
+	content, fileErr := os.ReadFile(file)
 
 	if fileErr != nil {
 		log.Fatalln("Failed to read leader file, please try again later")
@@ -38,7 +38,7 @@ func try_connect() *grpc.ClientConn {
 	)
 	for connErr != nil || !conn_is_ready(conn) {
 		log.Printf("Trying to read file %s\n", file)
-		content, fileErr = os.ReadFile(file);
+		content, fileErr = os.ReadFile(file)
 
 		if fileErr != nil {
 			log.Fatalln("Failed to read leader file, please try again later")
@@ -56,29 +56,29 @@ func try_connect() *grpc.ClientConn {
 }
 
 func main() {
-	conn := try_connect();
+	conn := try_connect()
 
 	client := proto.NewAuctionServiceClient(conn)
 	var timestamp uint64
 
-	timestamp += 1;
+	timestamp += 1
 	res, resErr := client.MakeBid(context.Background(), &proto.MakeBidRequest{
-		Bid: 0,
+		Bid:       0,
 		Timestamp: timestamp,
-	});
+	})
 	for resErr != nil || res == nil {
 		log.Printf("Connection failed, retrying connection...")
-		conn = try_connect();
-		timestamp += 1;
+		conn = try_connect()
+		timestamp += 1
 		res, resErr = client.MakeBid(context.Background(), &proto.MakeBidRequest{
-			Bid: 0,
+			Bid:       0,
 			Timestamp: timestamp,
-		});
+		})
 	}
 	timestamp = max(timestamp, res.Timestamp)
 	timestamp += 1
 
-	id := res.YourId;
+	//id := res.YourId;
 	// yay
 
 	// todo: implement random bidding behavior :=)
