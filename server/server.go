@@ -51,7 +51,6 @@ func connect_conn(conn *grpc.ClientConn, port string, leader_service *LeaderServ
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	leader_service.mutex.Lock()
 	leader_service.timestamp += 1
 	res, err := client.HiIExist(ctx, &private.HiIExistRequest{
 		Id: uint32(*my_id),
@@ -97,6 +96,11 @@ func main() {
 
 	go func() {
 		if try_connect_port == nil || *try_connect_port == 0 {
+			// I'm the only guy, LEADER_PORT needs me
+			leader_service.CallElection(context.Background(), &private.CallElectionRequest{
+				MyId:      uint32(*my_id),
+				Timestamp: leader_service.timestamp,
+			})
 			return
 		}
 		actual_try_connect_port := fmt.Sprintf("%d", *try_connect_port)
@@ -104,9 +108,11 @@ func main() {
 		time.Sleep(150 * time.Millisecond) // let own server startup
 		conn := try_connect_leader_service_with_retry(actual_try_connect_port)
 
+		leader_service.mutex.Lock()
 		if res := connect_conn(conn, actual_try_connect_port, leader_service); res != nil {
 			for _, server := range res {
 				serverConn := try_connect_leader_service_with_retry(server.Port)
+
 				if serverConn == nil {
 					continue // failure the other server hasn't caught yet?
 				}

@@ -75,11 +75,13 @@ func try_connect_leader_service_with_retry(port string) *grpc.ClientConn {
 
 func (self *LeaderService) map_servers() []*proto.HiIExistResponse_Servers {
 	arr := make([]*proto.HiIExistResponse_Servers, len(self.servers))
+	i := 0
 	for _, s := range self.servers {
-		arr = append(arr, &proto.HiIExistResponse_Servers{
+		arr[i] = &proto.HiIExistResponse_Servers{
 			Id:   s.id,
 			Port: s.port,
-		})
+		}
+		i++
 	}
 
 	return arr
