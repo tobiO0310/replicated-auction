@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-var AUCTION_TIME uint32 = 60 // seconds
+var AUCTION_TIME uint32 = 10 // seconds
 
 type Bidder struct {
 	id       uint32
@@ -36,9 +36,6 @@ func (self *AuctionService) IsLeader() bool {
 }
 
 func (self *AuctionService) bid(bidder_id uint32, bid uint32) bool {
-	self.mutex.Lock()
-	defer self.mutex.Unlock()
-
 	for len(self.known_bidders) <= int(bidder_id) {
 		// make sure the id has been created on this server
 		new_id := uint32(len(self.known_bidders))
@@ -47,7 +44,6 @@ func (self *AuctionService) bid(bidder_id uint32, bid uint32) bool {
 			last_bid: 0,
 		})
 	}
-
 	winner_bid := self.known_bidders[self.current_winner_id].last_bid
 
 	if bid <= winner_bid {
@@ -56,16 +52,18 @@ func (self *AuctionService) bid(bidder_id uint32, bid uint32) bool {
 
 	self.current_winner_id = bidder_id
 	self.known_bidders[bidder_id].last_bid = bid
-
 	return true
 }
 
 func (self *AuctionService) MakeBid(ctx context.Context, in *proto.MakeBidRequest) (*proto.MakeBidResponse, error) {
-	if in.MyId != nil {
-		log.Printf("someone's bidding??? %d bids %d!\n", *in.MyId, in.Bid)
+	if in.MyId == nil && in.Bid == 0 {
+		log.Printf("A new challenger approaches!")
+	} else if in.MyId != nil && in.Bid != 0 {
+		log.Printf("Someone's bidding??? %d bids %d!\n", *in.MyId, in.Bid)
 	} else {
-		log.Printf("someone's bidding??? nil bids %d!\n", in.Bid)
+		log.Printf("%d is trying to bid 0 but already has an account. sigh", *in.MyId)
 	}
+
 	self.mutex.Lock()
 	defer self.mutex.Unlock()
 
@@ -79,17 +77,18 @@ func (self *AuctionService) MakeBid(ctx context.Context, in *proto.MakeBidReques
 			port = self.leader_service.servers[*self.leader_service.leader_id].port
 		}
 		self.timestamp += 1
-		return nil, errors.New(
-			fmt.Sprintf("wrong server buddy, connect to localhost:%s", port),
-		)
+		return nil, fmt.Errorf("wrong server buddy, connect to localhost:%s", port)
 	}
 
 	if self.end_unixtime == 0 {
 		// start timer :)
 		self.end_unixtime = uint32(time.Now().Unix()) + AUCTION_TIME
+		log.Printf("Starting timer")
 	} else if self.end_unixtime <= uint32(time.Now().Unix()) {
 		// over now >:P
 		self.timestamp += 1
+		log.Printf("Timer is done.")
+
 		return nil, errors.New("Auction is over, buddy, you're too slow")
 	}
 
@@ -148,9 +147,7 @@ func (self *AuctionService) GetResult(ctx context.Context, in *proto.GetResultRe
 			port = self.leader_service.servers[*self.leader_service.leader_id].port
 		}
 		self.timestamp += 1
-		return nil, errors.New(
-			fmt.Sprintf("wrong server buddy, connect to localhost:%s", port),
-		)
+		return nil, fmt.Errorf("wrong server buddy, connect to localhost:%s", port)
 	}
 
 	if self.end_unixtime == 0 {
