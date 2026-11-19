@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"log"
 	"os"
 	"path"
 	proto "replicated_auction/grpc/public"
+	"strconv"
 	"strings"
 
 	"google.golang.org/grpc"
@@ -62,11 +64,10 @@ func try_connect() *grpc.ClientConn {
 	return conn
 }
 
-func bid(bid uint32) bool {
+func bid(bid uint32) {
 	//assumes you've set your id before using
 	// returns false if auction is over
 	if bid != 0 {
-		log.Printf("trying to bid %d", bid)
 		timestamp += 1
 		res, resErr := client.MakeBid(context.Background(), &proto.MakeBidRequest{
 			Bid:       bid,
@@ -88,19 +89,18 @@ func bid(bid uint32) bool {
 					})
 				}
 			} else if strings.Contains(resErr.Error(), "Auction is over") {
-				log.Printf("timer finished")
-				return false
+				log.Printf("[CLIENT] Auction is over")
+			} else if strings.Contains(resErr.Error(), "400") {
+				log.Printf("[CLIENT] Bid of %d too low", bid)
 			} else {
-				log.Printf("some other error")
-				return true
+				log.Printf("[CLIENT] Something went wrong")
 			}
 		}
 
 		timestamp = max(timestamp, res.Timestamp)
 		timestamp += 1
-		log.Printf("I just bid %d", bid)
+		log.Printf("[CLIENT] Bid of %d successful", bid)
 	}
-	return true
 }
 
 func setId() {
@@ -119,7 +119,6 @@ func setId() {
 		})
 	}
 	my_id = res.YourId
-	log.Printf("new id is: %d", my_id)
 }
 
 func result() (*proto.GetResultResponse, bool) {
@@ -157,27 +156,60 @@ func main() {
 
 	client = proto.NewAuctionServiceClient(conn)
 
-	setId()
-	log.Print("Set my Id!")
+	reader := bufio.NewReader(os.Stdin)
+	log.Print("[CLIENT] Ready to bid? Y/N")
+	ans, _ := reader.ReadString('\n')
+	ans = strings.TrimSpace(ans)
+	if ans == "Y" || ans == "y" {
+		setId()
+		log.Printf("[CLIENT] Your id is '%d'", my_id)
+	} else {
+		log.Printf("[CLIENT] Bye then")
+		conn.Close()
+		os.Exit(0)
+	}
 
-	keepBidding := true
-	var res *proto.GetResultResponse
-	var new_bid uint32
+	log.Printf("[CLIENT] Four possible commands:")
+	log.Printf(" - bid")
+	log.Printf(" - result")
+	log.Printf(" - exit")
+	log.Printf(" - help")
 
-	for keepBidding {
-		res, keepBidding = result()
-		if keepBidding {
-			highest := res.Result.(*proto.GetResultResponse_HighestBid)
-			curr_bid := highest.HighestBid
-			if last_bid < curr_bid || curr_bid == 0 {
-				new_bid = curr_bid + 1
-				keepBidding = bid(new_bid)
-				if keepBidding {
-					last_bid = new_bid
-				}
+	for true {
+		ans, _ = reader.ReadString('\n')
+		ans = strings.TrimSpace(ans)
+
+		if ans == "bid" {
+			log.Printf("[CLIENT] How much would you like to bid? Bid 0 to exit")
+			numAns, _ := reader.ReadString('\n')
+			numAns = strings.TrimSpace(numAns)
+			num, err := strconv.Atoi(numAns)
+			for err != nil {
+				log.Printf("[CLIENT] Invalid Response, please provide a number")
+				numAns, _ = reader.ReadString('\n')
+				numAns = strings.TrimSpace(numAns)
+				num, err = strconv.Atoi(numAns)
 			}
+			if num != 0 {
+				bid(uint32(num))
+			} else {
+				continue
+			}
+		} else if ans == "result" {
+			result()
+		} else if ans == "help" {
+			log.Printf("[CLIENT] Four possible commands:")
+			log.Printf(" - bid")
+			log.Printf(" - result")
+			log.Printf(" - exit")
+			log.Printf(" - help")
+		} else if ans == "exit" {
+			log.Printf("[CLIENT] Exiting program")
+			conn.Close()
+			os.Exit(0)
+		} else {
+			log.Printf("[CLIENT] Please provide a valid command. (Type \"help\" for commands)")
 		}
 	}
 
-	conn.Close()
 }
