@@ -109,7 +109,9 @@ func bid(bid uint32) {
 			}
 		}
 
-		timestamp = max(timestamp, res.Timestamp)
+		if res != nil {
+			timestamp = max(timestamp, res.Timestamp)
+		}
 		timestamp += 1
 		log.Printf("[CLIENT] Bid of %d successful", bid)
 	}
