@@ -30,9 +30,6 @@ var auction_port = flag.Uint64("auction_port", 0, "the port the auction clients 
 var leader_port = flag.Uint64("port", 0, "the port of this server")
 var try_connect_port = flag.Uint64("try_connect", 0, "a server to start connection to, 0 = none")
 
-func conn_is_ready(conn *grpc.ClientConn) bool {
-	return conn.GetState().String() != "READY"
-}
 func listen(port *uint64) net.Listener {
 	if port == nil {
 		log.Fatalf("Nil port given")
@@ -106,12 +103,12 @@ func main() {
 		actual_try_connect_port := fmt.Sprintf("%d", *try_connect_port)
 
 		time.Sleep(150 * time.Millisecond) // let own server startup
-		conn := try_connect_leader_service_with_retry(actual_try_connect_port)
+		conn := try_connect_leader_service(actual_try_connect_port)
 
 		leader_service.mutex.Lock()
 		if res := connect_conn(conn, actual_try_connect_port, leader_service); res != nil {
 			for _, server := range res {
-				serverConn := try_connect_leader_service_with_retry(server.Port)
+				serverConn := try_connect_leader_service(server.Port)
 
 				if serverConn == nil {
 					continue // failure the other server hasn't caught yet?

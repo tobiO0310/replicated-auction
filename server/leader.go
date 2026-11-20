@@ -58,7 +58,7 @@ var kasp = keepalive.ServerParameters{
 	Timeout:               1 * time.Second,  // Wait 1 second for the ping ack before assuming the connection is dead
 }
 
-func try_connect_leader_service_with_retry(port string) *grpc.ClientConn {
+func try_connect_leader_service(port string) *grpc.ClientConn {
 	conn, connErr := grpc.NewClient(
 		fmt.Sprintf("localhost:%s", strings.TrimSpace(port)),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -174,7 +174,7 @@ func (self *LeaderService) HiIExist(ctx context.Context, in *proto.HiIExistReque
 
 	other_servers := self.map_servers()
 
-	conn := try_connect_leader_service_with_retry(in.Port)
+	conn := try_connect_leader_service(in.Port)
 	if conn == nil {
 		return nil, errors.New("could not connect to you")
 	}
@@ -223,7 +223,7 @@ func (self *LeaderService) CallElection(ctx context.Context, in *proto.CallElect
 		self.timestamp += 1
 
 		if res.LeaderId != nil {
-			log.Printf("they found a leader! new leader id: %d\n", res.LeaderId)
+			log.Printf("they found a leader! new leader id: %d\n", *res.LeaderId)
 			self.timestamp += 1
 			res.Timestamp = self.timestamp
 			return res, nil
