@@ -25,7 +25,19 @@ var client proto.AuctionServiceClient
 var conn *grpc.ClientConn
 
 func conn_is_ready(conn *grpc.ClientConn) bool {
-	return conn.GetState().String() != "READY"
+	state := conn.GetState().String()
+	return state == "READY" || state == "IDLE"
+}
+
+func is_auction_over(error error) bool {
+	return error != nil && strings.Contains(error.Error(), "Auction is over");
+}
+
+func auction_is_over_test(error error) {
+	if is_auction_over(error) {
+		log.Printf("Auction is over, server is refusing connections\n")
+		os.Exit(0)
+	}
 }
 
 func try_connect() *grpc.ClientConn {
@@ -110,6 +122,7 @@ func setId() {
 	})
 	//todo: handle errors that aren't to do with connection
 	for resErr != nil || res == nil {
+		auction_is_over_test(resErr)
 		log.Printf("Connection failed, retrying connection...")
 		conn = try_connect()
 		timestamp += 1
