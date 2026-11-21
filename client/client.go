@@ -29,12 +29,12 @@ func conn_is_ready(conn *grpc.ClientConn) bool {
 }
 
 func is_auction_over(error error) bool {
-	return error != nil && strings.Contains(error.Error(), "Auction is over");
+	return error != nil && strings.Contains(error.Error(), "Auction is over")
 }
 
 func auction_is_over_test(error error) {
 	if is_auction_over(error) {
-		log.Printf("Auction is over, server is refusing connections\n")
+		log.Printf("[CLIENT] Auction is over, server is refusing connections\n")
 		os.Exit(0)
 	}
 }
@@ -42,14 +42,14 @@ func auction_is_over_test(error error) {
 func try_connect() *grpc.ClientConn {
 	pwd, pwdErr := os.Getwd()
 	if pwdErr != nil {
-		log.Fatalln("Could not get current working directory, please try again later")
+		log.Fatalln("[ERROR] Could not get current working directory, please try again later")
 	}
 	file := path.Join(pwd, FILE_NAME)
 	log.Printf("Trying to read file %s\n", file)
 	content, fileErr := os.ReadFile(file)
 
 	if fileErr != nil {
-		log.Fatalln("Failed to read leader file, please try again later")
+		log.Fatalln("[ERROR] Failed to read leader file, please try again later")
 	}
 
 	conn, connErr := grpc.NewClient(
@@ -61,7 +61,7 @@ func try_connect() *grpc.ClientConn {
 		content, fileErr = os.ReadFile(file)
 
 		if fileErr != nil {
-			log.Fatalln("Failed to read leader file, please try again later")
+			log.Fatalln("[ERROR] Failed to read leader file, please try again later")
 		}
 
 		conn, connErr = grpc.NewClient(
@@ -129,7 +129,7 @@ func setId() {
 	//todo: handle errors that aren't to do with connection
 	for resErr != nil || res == nil {
 		auction_is_over_test(resErr)
-		log.Printf("Connection failed, retrying connection...")
+		log.Printf("[ERROR] Connection failed, retrying connection...")
 		conn = try_connect()
 		client = proto.NewAuctionServiceClient(conn)
 		timestamp += 1
@@ -149,7 +149,7 @@ func result() (*proto.GetResultResponse, bool) {
 		Timestamp: timestamp,
 	})
 	for resErr != nil || res == nil {
-		log.Printf("Connection failed, retrying connection...")
+		log.Printf("[ERROR] Connection failed, retrying connection...")
 		conn = try_connect()
 		client = proto.NewAuctionServiceClient(conn)
 		timestamp += 1
@@ -164,10 +164,10 @@ func result() (*proto.GetResultResponse, bool) {
 	highest, ok := res.Result.(*proto.GetResultResponse_HighestBid)
 
 	if ok {
-		log.Printf("Auction is still going, current highest bid is: %d\n", highest.HighestBid)
+		log.Printf("[CLIENT] Auction is still going, current highest bid is: %d\n", highest.HighestBid)
 	} else {
 		winner := res.Result.(*proto.GetResultResponse_Winner_)
-		log.Printf("Auction is over! Winner has id %d and won with a bid of %d", winner.Winner.BidderId, winner.Winner.Bid)
+		log.Printf("[CLIENT] Auction is over! Winner has id %d and won with a bid of %d", winner.Winner.BidderId, winner.Winner.Bid)
 	}
 
 	return res, ok

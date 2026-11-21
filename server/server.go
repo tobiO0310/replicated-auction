@@ -20,7 +20,7 @@ func leader_file() string {
 
 	pwd, pwdErr := os.Getwd()
 	if pwdErr != nil {
-		log.Fatalln("Could not get current working directory, please try again later")
+		log.Fatalln("[SERVER ERROR] Could not get current working directory, please try again later")
 	}
 	return path.Join(pwd, FILE_NAME)
 }
@@ -32,11 +32,11 @@ var try_connect_port = flag.Uint64("try_connect", 0, "a server to start connecti
 
 func listen(port *uint64) net.Listener {
 	if port == nil {
-		log.Fatalf("Nil port given")
+		log.Fatalf("[SERVER ERROR] Nil port given")
 	}
 	lis, netErr := net.Listen("tcp", fmt.Sprintf("localhost:%d", *port))
 	if netErr != nil {
-		log.Fatalf("[SERVER] failed to listen: %v\n", netErr)
+		log.Fatalf("[SERVER ERROR] failed to listen: %v\n", netErr)
 	} else {
 		log.Printf("[SERVER]\tserver is listening on rpc://localhost:%d\n\t\t\t\tPress Ctrl+C to exit.\n", *port)
 	}
@@ -55,7 +55,7 @@ func connect_conn(conn *grpc.ClientConn, port string, leader_service *LeaderServ
 		Timestamp: leader_service.timestamp,
 	})
 	if err != nil || res == nil {
-		log.Printf("failed to connect2: %s", err)
+		log.Printf("[SERVER ERROR] failed to connect: %s", err)
 		return nil
 	}
 	leader_service.timestamp = max(leader_service.timestamp, res.Timestamp)

@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-var AUCTION_TIME uint32 = 10 // seconds
+var AUCTION_TIME uint32 = 30 // seconds
 
 type Bidder struct {
 	id       uint32
@@ -57,11 +57,11 @@ func (self *AuctionService) bid(bidder_id uint32, bid uint32) bool {
 
 func (self *AuctionService) MakeBid(ctx context.Context, in *proto.MakeBidRequest) (*proto.MakeBidResponse, error) {
 	if in.MyId == nil && in.Bid == 0 {
-		log.Printf("A new challenger approaches!")
+		log.Printf("[AUCTION] A new challenger approaches!")
 	} else if in.MyId != nil && in.Bid != 0 {
-		log.Printf("Someone's bidding??? %d bids %d!\n", *in.MyId, in.Bid)
+		log.Printf("[AUCTION] Someone's bidding??? %d bids %d!\n", *in.MyId, in.Bid)
 	} else {
-		log.Printf("%d is trying to bid 0 but already has an account. sigh", *in.MyId)
+		log.Printf("[AUCTION] %d is trying to bid 0 but already has an account. sigh", *in.MyId)
 	}
 
 	self.mutex.Lock()
@@ -83,11 +83,11 @@ func (self *AuctionService) MakeBid(ctx context.Context, in *proto.MakeBidReques
 	if self.end_unixtime == 0 {
 		// start timer :)
 		self.end_unixtime = uint32(time.Now().Unix()) + AUCTION_TIME
-		log.Printf("Starting timer")
+		log.Printf("[AUCTION] Starting timer")
 	} else if self.end_unixtime <= uint32(time.Now().Unix()) {
 		// over now >:P
 		self.timestamp += 1
-		log.Printf("Timer is done.")
+		log.Printf("[AUCTION] Timer is done.")
 
 		return nil, errors.New("Auction is over, buddy, you're too slow")
 	}
@@ -134,7 +134,7 @@ func (self *AuctionService) MakeBid(ctx context.Context, in *proto.MakeBidReques
 }
 
 func (self *AuctionService) GetResult(ctx context.Context, in *proto.GetResultRequest) (*proto.GetResultResponse, error) {
-	log.Printf("someone wanna snitch on the winner... let's see if there are any")
+	log.Printf("[AUCTION] someone wanna snitch on the winner... let's see if there are any")
 	self.mutex.Lock()
 	defer self.mutex.Unlock()
 
