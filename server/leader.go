@@ -110,6 +110,7 @@ func (self *LeaderService) servers_above_me() []*Server {
 }
 
 func (self *LeaderService) updateServers(bidderId uint32, bid uint32, endUnixtime uint32, timestamp uint64) uint64 {
+	log.Printf("updating servers that bidder %d bid %d at %d and we end at %d", bidderId, bid, timestamp, endUnixtime)
 	for _, server := range self.servers {
 		client := proto.NewLeaderServiceClient(server.connection)
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
