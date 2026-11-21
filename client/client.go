@@ -21,7 +21,6 @@ var my_id uint32
 var last_bid uint32
 var timestamp uint64
 
-var client proto.AuctionServiceClient
 var conn *grpc.ClientConn
 
 func conn_is_ready(conn *grpc.ClientConn) bool {
@@ -81,6 +80,7 @@ func bid(bid uint32) {
 	// returns false if auction is over
 	if bid != 0 {
 		timestamp += 1
+		client := proto.NewAuctionServiceClient(conn)
 		res, resErr := client.MakeBid(context.Background(), &proto.MakeBidRequest{
 			Bid:       bid,
 			MyId:      &my_id,
@@ -93,6 +93,7 @@ func bid(bid uint32) {
 				for resErr != nil || res == nil {
 					log.Printf("Connection failed, retrying connection...")
 					conn = try_connect()
+					client = proto.NewAuctionServiceClient(conn)
 					timestamp += 1
 					res, resErr = client.MakeBid(context.Background(), &proto.MakeBidRequest{
 						Bid:       bid,
@@ -118,6 +119,7 @@ func bid(bid uint32) {
 }
 
 func setId() {
+	client := proto.NewAuctionServiceClient(conn)
 	res, resErr := client.MakeBid(context.Background(), &proto.MakeBidRequest{
 		Bid:       0,
 		Timestamp: timestamp,
@@ -127,6 +129,7 @@ func setId() {
 		auction_is_over_test(resErr)
 		log.Printf("Connection failed, retrying connection...")
 		conn = try_connect()
+		client = proto.NewAuctionServiceClient(conn)
 		timestamp += 1
 		res, resErr = client.MakeBid(context.Background(), &proto.MakeBidRequest{
 			Bid:       0,
@@ -139,12 +142,14 @@ func setId() {
 func result() (*proto.GetResultResponse, bool) {
 	//if bool true then response type is highestbid, if false then winner
 	timestamp += 1
+	client := proto.NewAuctionServiceClient(conn)
 	res, resErr := client.GetResult(context.Background(), &proto.GetResultRequest{
 		Timestamp: timestamp,
 	})
 	for resErr != nil || res == nil {
 		log.Printf("Connection failed, retrying connection...")
 		conn = try_connect()
+		client = proto.NewAuctionServiceClient(conn)
 		timestamp += 1
 		res, resErr = client.GetResult(context.Background(), &proto.GetResultRequest{
 			Timestamp: timestamp,
@@ -168,8 +173,6 @@ func result() (*proto.GetResultResponse, bool) {
 
 func main() {
 	conn = try_connect()
-
-	client = proto.NewAuctionServiceClient(conn)
 
 	reader := bufio.NewReader(os.Stdin)
 	log.Print("[CLIENT] Ready to bid? Y/N")
