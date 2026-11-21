@@ -104,6 +104,7 @@ func (self *AuctionService) MakeBid(ctx context.Context, in *proto.MakeBidReques
 			self.timestamp += 1
 			return nil, errors.New("400 make better bid buddy")
 		}
+		self.leader_service.updateServers(*in.MyId, in.Bid, self.end_unixtime, self.timestamp)
 
 		self.timestamp += 1
 		return &proto.MakeBidResponse{
