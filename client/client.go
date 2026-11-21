@@ -88,10 +88,10 @@ func bid(bid uint32) {
 		})
 
 		if resErr != nil {
-			if strings.Contains(resErr.Error(), "wrong server buddy") {
-				log.Printf("connection error")
+			if strings.Contains(resErr.Error(), "wrong server buddy") || strings.Contains(resErr.Error(), "Error while dialing") {
+				log.Printf("[ERROR] Connection error")
 				for resErr != nil || res == nil {
-					log.Printf("Connection failed, retrying connection...")
+					log.Printf("[ERROR] Connection failed, retrying connection...")
 					conn = try_connect()
 					client = proto.NewAuctionServiceClient(conn)
 					timestamp += 1
@@ -106,15 +106,17 @@ func bid(bid uint32) {
 			} else if strings.Contains(resErr.Error(), "400") {
 				log.Printf("[CLIENT] Bid of %d too low", bid)
 			} else {
-				log.Printf("[CLIENT] Something went wrong")
+				log.Printf("[ERROR] Something went wrong")
+				log.Print(resErr.Error())
 			}
+		} else {
+			log.Printf("[CLIENT] Bid of %d successful", bid)
 		}
 
 		if res != nil {
 			timestamp = max(timestamp, res.Timestamp)
 		}
 		timestamp += 1
-		log.Printf("[CLIENT] Bid of %d successful", bid)
 	}
 }
 
