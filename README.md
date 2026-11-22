@@ -1,9 +1,21 @@
-Auction time is 30 seconds, can be manually set by changing the AUCTION_TIME attribute in the auction.go file.
+# Replicated auction
+This program represents an auction service that has multiple servers to make the auction continue if a server was to crash (up to n-1 crashes)
 
-Example setup, run each command in different terminals:
+The auction itself lasts 30 seconds, where in the clients can bid. The auction time can be changed in the auction.go file, if you wish to change the duration of it.
+
+## Servers
+To run the servers, you must run the following commands in your terminal
 ```bash
 $ go run server/*.go --id=0 --port=3000 --auction_port=3001
 $ go run server/*.go --id=1 --port=3002 --auction_port=3003 --try_connect=3000
+```
+You can run more servers if you wish, you just have to update the data given in the line (+1 to id, and make sure that the ports do not interfere with any ports in use)
+
+## Client
+To run the client, you must use the following command in your terminalk
+```bash
 $ go run client/*.go
 ```
-To test crash resistance, use `ctrl`+ `c` to close a running server and continue using the client.
+
+## Crashing
+To test the crash resistance of our program, use `ctrl`+ `c` in the termninal of a running server, and then continue using the client.
